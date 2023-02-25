@@ -38,12 +38,7 @@ defineProps<{
 }>();
 
 const toDetail = () => {
-  router.push({
-    name: "detail",
-    query: {
-      id: "3",
-    },
-  });
+  router.push("/notFound");
 };
 </script>
 <style>

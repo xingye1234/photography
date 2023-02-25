@@ -4,7 +4,6 @@ import {RouterView, useRoute } from "vue-router";
 const route = useRoute()
 const showSkeleton = ref(true)
 
-
 onMounted(()=>{
   showSkeleton.value = false;
 })

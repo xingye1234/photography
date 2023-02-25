@@ -139,18 +139,19 @@ const restPassword = ()=>{
 .login_container {
   width: 100%;
   height: 100vh;
-  background-image: url(src/assets/banner/image/海岛风景.jpeg);
-  background-size: 100% 100%;
+  // background-image: url(src/assets/banner/image/海岛风景.jpeg);
+  // background-size: 100% 100%;
   overflow: hidden; //关闭bfc
+  background-color: white;
 }
 .login {
   width: 500px;
   padding: 10px 25px 25px;
   margin: 200px auto;
   text-align: center;
-  background-color: white;
+  background: white;
   border-radius: 15px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  box-shadow:0 0 6px rgba(0, 0 ,0, .3);
   h3 {
     margin-bottom: 25px;
     font-size: 25px;

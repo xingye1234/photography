@@ -14,6 +14,9 @@ import VueLazyload from 'vue-lazyload'
 
 import './assets/main.css'
 
+
+
+
 const app = createApp(App)
 //注册icons
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
@@ -33,6 +36,4 @@ app.use(createPinia())
 app.use(router)
 // 安装element
 app.use(ElementPlus,{locale})
-
-
 app.mount('#app')

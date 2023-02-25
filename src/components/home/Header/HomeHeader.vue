@@ -331,12 +331,14 @@ const handleAvatarSuccess: UploadProps['onSuccess'] = (
         font-weight: bold;
         padding: 5px 15px;
         transition: all 0.3s;
+        position: relative;
       }
-      span:hover {
+      span:hover{
         background-color: rgba(0, 0, 0, 0.1) !important;
         color: #18C5A3 !important;
         border-radius: 5px;
       }
+      
     }
   }
 

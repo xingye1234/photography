@@ -105,7 +105,7 @@ const handleClose = (done: () => void) => {
 #top_header {
   height: 50px;
   width: 100%;
-  background-color: #111111;
+  background-color: white;
   position: fixed;
   top: 0;
   left: 0;
@@ -115,9 +115,12 @@ const handleClose = (done: () => void) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-bottom: 1px solid rgb(235, 235, 235);
+
   a {
-    color: #eee;
+    color: black;
     font-size: 12px;
+    font-weight: bold;
   }
   li {
     display: inline-block;
@@ -143,9 +146,10 @@ const handleClose = (done: () => void) => {
         padding: 5px 15px;
         box-sizing: border-box;
         cursor: pointer;
-        color: #eee;
+        color: black;
         font-size: 12px;
         margin: 0;
+        font-weight: bold;
       }
       li:hover {
         text-decoration: underline;

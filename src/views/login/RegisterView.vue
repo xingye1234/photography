@@ -24,7 +24,7 @@
           <el-input v-model="ruleForm.password" type="password" :prefix-icon="Lock" />
         </el-form-item>
         <el-form-item  prop="address" style="width:80%" label="Address">
-          <el-input v-model="ruleForm.address" :prefix-icon="Location"/>
+          <el-input v-model="ruleForm.address" :prefix-icon="Location" disabled="true"/>
         </el-form-item>
         <el-form-item  prop="phone" style="width:80%" label="Phone">
           <el-input v-model="ruleForm.phone" :prefix-icon="Iphone"/>
@@ -42,6 +42,11 @@
   </div>
 </div>
 </template>
+<script lang="ts">
+window._AMapSecurityConfig = {
+	securityJsCode:'d0eaa46af4ec97819cec9a56a18c3883',
+}
+</script>
 <script setup lang="ts">
 import TopHeader from "@/components/home/Header/TopHeader.vue";
 import { reactive, ref, onMounted, h } from "vue";
@@ -50,6 +55,7 @@ import { ElMessage } from "element-plus";
 import { useRouter, useRoute } from "vue-router";
 import requests from "@/network/request";
 import { User,Lock, Location,Iphone,Folder } from "@element-plus/icons-vue";
+import AMapLoader from '@amap/amap-jsapi-loader';
 
 const router = useRouter();
 const route = useRoute();
@@ -63,6 +69,10 @@ const ruleForm = reactive({
   phone:"",
   email:""
 });
+
+onMounted(()=>{
+  initMap()
+})
 
 const rules = reactive<FormRules>({
   name: [
@@ -111,14 +121,41 @@ const registerBtn = async () => {
     });
   }
 };
+
+const initMap = ()=>{
+    AMapLoader.load({
+              key:"da6bd131d4dd8c8eca5b7e0743aa4c5d",             // 申请好的Web端开发者Key，首次调用 load 时必填
+              version:"2.0",      // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
+              plugins:['AMap.CitySearch'],     // 需要使用的的插件列表，如比例尺'AMap.Scale'等
+              AMapUI: {
+                version: "1.1",
+                plugins: []  // 需要加载的 AMapUI ui插件
+              }
+          }).then((AMap)=>{
+              //获取当前城市定位
+              let city = new AMap.CitySearch()
+                city.getLocalCity((status, result)=>{
+                  if(status === "complete"){
+                    ruleForm.address = result.province+result.city;
+                    return ElMessage({
+                      message:`您当前所在城市${result.province+result.city}`
+                    })
+                  }
+              })
+          }).catch(e=>{
+              console.log(e);
+          })
+}
+
 </script>
 <style lang='less' scoped>
 .login_container {
   width: 100%;
   height: 100vh;
-  background-image: url(src/assets/banner/image/海岛风景.jpeg);
-  background-size: 100% 100%;
+  // background-image: url(src/assets/banner/image/海岛风景.jpeg);
+  // background-size: 100% 100%;
   overflow: hidden; //关闭bfc
+  background-color: white;
 }
 .login {
   width: 500px;

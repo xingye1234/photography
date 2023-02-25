@@ -1,11 +1,13 @@
 <template>
     <div id="search">
+        <div class="not-found" v-if="!state.searchData.length">
+                <img src="../../assets/error/notFound.jpg" alt="">
+        </div>
         <el-row :gutter="20">
         <el-col v-for="(item, index) in state.searchData" :key="item.article_id" :span="6" >
-            <el-card :body-style="{ padding: '10px' }" shadow="hover"
-            style="margin-bottom: 20px; cursor: pointer"
+            <el-card :body-style="{ padding: '3px', }" shadow="hover" class="card-wrap"
             @click="toDetail(item.article_id, item.user_id)" >
-            <img :src="item.img" class="image" :title="item.title"/>
+            <img :src="item.img" class="image" :title="item.title" style="display: block;"/>
             </el-card>
         </el-col>
         </el-row>
@@ -56,6 +58,27 @@ const toDetail = (article_id:number, user_id:number) => {
 #search{
     width: 100%;
     height: 100vh;
-    background: #e9e9e9;
+    background: white;
+    .not-found{
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        img{
+            width: 569px;
+            height: 355px;
+        }
+    }
+
+    .card-wrap:hover{
+        transform: translateY(-5px);
+        transition: all 0.5s;
+    }
+
+    .card-wrap{
+        margin-top: 5px;
+        cursor: pointer; 
+        box-sizing: border-box;
+    }
 }
 </style>

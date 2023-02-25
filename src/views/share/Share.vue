@@ -157,7 +157,7 @@ import Camera from '../../components/Camera.vue';
 import { useRouter } from 'vue-router';
 import { ElMessage,ElMessageBox } from 'element-plus';
 import requests from "@/network/request";
-import Map from '@/components/Map.vue'
+import Map from '@/components/map/Map.vue'
 import type { UploadProps, UploadUserFile,UploadRawFile, UploadFile, UploadFiles} from "element-plus";
 import Chat from '@/views/chat/Chat.vue';
 

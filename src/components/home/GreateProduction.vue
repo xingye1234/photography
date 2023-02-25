@@ -3,11 +3,13 @@
     <p class="title">优秀作品</p>
     <el-row :gutter="20">
       <el-col v-for="(item, index) in dataList" :key="item.article_id" :span="6" >
-        <el-card :body-style="{ padding: '10px' }" shadow="hover"
-          style="margin-bottom: 20px; cursor: pointer"
+        <div class="card-content"
           @click="toDetail(item.article_id, item.user_id)" >
           <img v-lazy="item.img" class="image" />
-        </el-card>
+          <div class="mark">
+            <span class="article_title">{{ item .title}}</span>
+          </div>
+        </div>
       </el-col>
     </el-row>
   </div>
@@ -23,6 +25,7 @@ interface IProduction {
   create_time:string;
   description: string;
   img:string;
+  username:string;
 }
 
 
@@ -32,6 +35,7 @@ const currentDate = ref(new Date())
 defineProps<{
   dataList?: Array<IProduction>;
 }>();
+
 
 const toDetail = (article_id:number, user_id:number) => {
   router.push({
@@ -92,5 +96,48 @@ const toDetail = (article_id:number, user_id:number) => {
     left: 50%;
     transform: translateX(-50%);
   }
+
+  .card-content{
+    margin-bottom: 20px;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    img{
+      border-radius: 15px;
+    }
+    .mark{
+      width: 327px;
+      height: 0px;
+      background-color: rgb(29, 28, 28);
+      opacity: 0.3;
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .article_title{
+        display: none;
+        color: white;
+        font-size: 40px;
+        font-weight: bold;
+        font-family: '华文行楷';
+      }
+    }
+  }
+  .card-content:hover .mark{
+    height: 419px;
+    transition: all 0.3s;
+    border-radius: 15px;
+  }
+  .card-content:hover .article_title{
+    display: block;
+  }
+  .card-content:hover img{
+    transform: scale(1.3);
+    transition: all 0.5s;
+  }
+
+  
 }
 </style>

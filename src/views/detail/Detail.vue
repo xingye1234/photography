@@ -116,7 +116,7 @@ import { useRoute } from "vue-router";
 import requests from "@/network/request";
 import { onMounted, ref,reactive } from "vue";
 import {ElMessage, ElMessageBox, inputEmits} from "element-plus"
-import {getId} from "@/utils/login"
+import {getId, getItem} from "@/utils/login"
 import {userInfo} from "@/stores/userInfo"
 import router from "@/router";
 
@@ -364,8 +364,8 @@ const sendComment = async ()=>{
   //从路由中获取文章ID
   const article_id = route.query.article_id;
   const user_id = getId('id');
-  console.log(user_id);
-  if(!user_id){
+  const user_name = getItem('name');
+  if(!user_name){
     router.push('/login')
     return ElMessage({
       message:'请前往登录页面登录'

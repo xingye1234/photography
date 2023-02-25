@@ -1,15 +1,15 @@
 <template>
+<div>
   <Top></Top>
   <!-- <el-scrollbar height="100vh" @scroll="handlerScroll"> -->
     <div id="img_library">
       <el-row :gutter="10">
         <el-col v-for="(o, index) in imgList"  :key="o" :span="6" :offset="index > 0 ? 2 : 0">
-          <el-card :body-style="{ padding: '5px',boxShadow:''}"
-            style="margin-bottom: 10px; cursor: pointer"
+          <div class="card-content"
             @click="readDetail(`https://picsum.photos/360/460?random=${index}`)"
           >
             <img v-lazy="`https://picsum.photos/360/460?random=${index}`"  class="image" />
-          </el-card>
+          </div>
         </el-col>
       </el-row>
     </div>
@@ -30,6 +30,7 @@
 </Teleport>
 
 <BackTop></BackTop>
+</div>
 </template>
 <script setup lang="ts">
 
@@ -121,13 +122,20 @@ const productData2 = ()=>{
   margin-top: 50px;
   box-sizing: border-box;
 }
-.el-card{
-  transition: all 0.5s;
-}
-.el-card:hover{
-  box-shadow: 0px 0px 3px 2px rgb(213, 211, 211);
-  transform: translateY(-5px);
-}
+
+.card-content{
+    margin-bottom: 20px;
+    cursor: pointer;
+    overflow: hidden;
+    margin:15px 0 15px;
+    img{
+      border-radius: 15px;
+    }
+  }
+  .card-content:hover img{
+    transform: scale(1.3);
+    transition: all 0.5s;
+  }
 .wrap{
   position: fixed;
   z-index: 999;

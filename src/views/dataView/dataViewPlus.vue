@@ -1,28 +1,54 @@
 <template>
   <div id="data-view">
     <div class="left">
-        
     </div>
     <div id="center" style="height: 100vh"></div>
     <div class="right">
-      <!-- <el-table :data="cityData" border style="width: 100%" >
-        <el-table-column prop="cityData[0]" label="城市名" width="200" align="center"/>
-        <el-table-column prop="name" label="用户人数" width="200" align="center"/>
-      </el-table> -->
+      <Transition name="slide-fade">
       <ul v-if="cityData.length">
-        <li v-for="(city, index) in cityData" :key="index">{{ city }}</li>
+        <!-- <li class="header-titile"><span>地区</span><span>人数</span></li>
+        <li v-for="(city, index) in cityData" :key="index" class="header-titile">
+          <span v-if="city.address">{{ city.address }}</span>
+          <span v-else>{{ city }}</span>
+          <span>{{ city.personCount }}</span>
+        </li> -->
+
+        <table border="1" cellspacing="0">
+            <thead>
+              <tr>
+                <th>地区</th>
+                <th>人数</th>
+              </tr>
+            </thead>
+          <tbody>
+            <tr v-for="(city, index) in cityData" :key="index">
+              <td v-if="city.address">{{ city.address }}</td>
+              <td v-else>{{ city }}</td>
+              <td>{{ city.personCount }}</td>
+            </tr>
+          </tbody>
+        </table>
       </ul>
       <div v-else>暂无数据</div>
+    </Transition>
     </div>
+    
   </div>
 </template>
 <script setup lang="ts">
 import * as echarts from "echarts";
 import { onMounted, reactive } from "vue";
 import { dataMap } from "../../mapData";
-import "../../assets/china"
+import "../../assets/china";
+import requests from "@/network/request"
+import { forEach } from "lodash";
 
-let cityData = reactive<string[]>([]);
+interface IUserCpunt{
+  address:string;
+  personCount:number;
+}
+
+let cityData = reactive<IUserCpunt[]>([]);
 
 onMounted(() => {
   let myEcharts = echarts.init(
@@ -176,13 +202,37 @@ onMounted(() => {
   });
 
   //点击事件
-  myEcharts.on("click", (params) => {
-    console.log(params);
+  myEcharts.on("click", async (params)=>{
+    // console.log(params);
     const { name } = params;
     //清空数组
     cityData.splice(0, cityData.length);
-    //将数据添加到数组中
-    cityData.push(...dataMap[name]);
+    try {
+      const {data} = await requests(`/user/get_person/${name}`)
+      if(data.code === 200){
+        let userData = [] as any[];
+        let userCount = 0;
+        let noUserCount = 0;
+        data.data.forEach(item =>{
+          userData = dataMap[name].map(itemChildren => {
+           
+            if(item.includes(itemChildren)){
+              return{address:itemChildren, personCount:userCount++};
+            }else{
+              return {address:itemChildren, personCount:noUserCount}
+            }
+          })
+        })
+        
+        // //将数据添加到数组中
+        cityData.push(...userData);
+
+      }else{
+        cityData.push(...dataMap[name]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   });
 });
 </script>
@@ -192,6 +242,7 @@ onMounted(() => {
   height: 100vh;
   display: flex;
   background: #013954;
+  overflow: hidden;
   .left {
     width: 300px;
   }
@@ -202,6 +253,23 @@ onMounted(() => {
     width: 400px;
     overflow: auto;
     // background: blue;
+    table{
+      width: 100%;
+      background-color: #13587a;
+      color: white;
+      text-align: center;
+      th{
+        white-space: nowrap;
+      }
+      tr{
+        padding: 5px;
+      }
+     
+    }
+    .header-titile{
+      display: flex;
+      justify-content: space-between;
+    }
     ul {
       padding: 5px 10px;
       box-sizing: border-box;
@@ -216,5 +284,19 @@ onMounted(() => {
       }
     }
   }
+
+  .slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateY(10px);
+  opacity: 0;
+}
 }
 </style>

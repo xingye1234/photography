@@ -38,6 +38,15 @@ let userRoutes = [
     name: 'imgLibrary',
     component: () => import('../views/ImgLibrary/ImgLibrary.vue')
   },
+  {
+    path: '/404',
+    name: 'notFound',
+    component: () => import('../views/notFound/NotFound.vue')
+  },
+  {
+    path: "/:catchAll(.*)", // 不识别的path自动匹配404
+    redirect: '/404',
+  },
   {path:'/share', name:'share',component:()=>import('../views/share/Share.vue'),  meta:{keepAlive: false}},
   {path:'/editinfo', name:'editinfo', component:()=> import('../components/personalCenter/EditInfo.vue')},
   {

@@ -15,7 +15,7 @@ window._AMapSecurityConfig = {
 </script>
 <script lang="ts" setup>
 import AMapLoader from '@amap/amap-jsapi-loader';
-import { onMounted, reactive, ref,shallowRef, getCurrentInstance } from 'vue';
+import { onMounted, reactive, ref,shallowRef } from 'vue';
 import {ElMessage} from "element-plus"
 
 const emit = defineEmits<{
@@ -33,7 +33,6 @@ const info = reactive({
   address:'暂无地址',
 })
 
-const instance:any  = getCurrentInstance();
 
 const initMap = ()=>{
   AMapLoader.load({

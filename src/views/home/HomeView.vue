@@ -127,7 +127,7 @@ const getUserInfo = async () => {
       userStore.getUserInfo();
     }
   } catch (error) {
-    throw error;
+    console.log(error);
   }
 };
 

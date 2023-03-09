@@ -134,7 +134,7 @@ const toDetail = (article_id:number, user_id:number) => {
     display: block;
   }
   .card-content:hover img{
-    transform: scale(1.3);
+    transform: scale(1.1);
     transition: all 0.5s;
   }
 

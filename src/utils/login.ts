@@ -10,16 +10,16 @@ const removeItem = (value:string)=>{
     localStorage.removeItem(value)
 }
 
-const getId = (id: string)=>{
-    return localStorage.getItem(id)
+const getId = ()=>{
+    return localStorage.getItem('id')
 }
 
 const setId = (k:string, v:string)=>{
     localStorage.setItem(k, v)
 }
 
-const removeId = (id:string)=>{
-    localStorage.removeItem(id)
+const removeId = ()=>{
+    localStorage.removeItem("id")
 }
 
 

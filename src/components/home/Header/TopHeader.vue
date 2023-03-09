@@ -53,6 +53,7 @@ import { ref, h } from "vue";
 import { userInfo } from "@/stores/userInfo";
 import { removeItem } from "@/utils/login";
 import { ElMessageBox, ElMessage } from "element-plus";
+import { getId } from "@/utils/login";
 
 const dialogVisible = ref(false);
 
@@ -70,7 +71,7 @@ user.getName();
 
 //跳转到个人中心
 function personalCenter() {
-  router.push("/personalCenter");
+  router.push(`/personalCenter?id=${getId()}`);
 }
 
 const direction = ref("rtl");

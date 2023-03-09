@@ -1,9 +1,11 @@
 import { defineStore } from "pinia";
 import requests from "@/network/request";
+import type {IArticleInfo} from '@/types/type'
+
 
 export const articleInfo = defineStore('articleStore', {
     state:()=>({
-        articleInfo:[]
+        articleInfo: <IArticleInfo[] | object>[]
     }),
     getters:{},
     actions:{
@@ -11,7 +13,12 @@ export const articleInfo = defineStore('articleStore', {
         try {
             const {data} = await requests('/article')
             // console.log(data.data);
-            this.articleInfo = data.data;
+            this.articleInfo = data.data.map(item =>{
+              return {
+                ...item,
+                isFollow:false
+              }
+            });
           } catch (error) {
             console.log(error);
           }

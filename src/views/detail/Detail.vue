@@ -25,9 +25,9 @@
                     <el-icon><Plus /></el-icon>
                     <span>关注</span>
                   </div>
-                  <div v-else @click="cancelFollow">
-                    <span>已关注</span>
-                  </div>
+                  <!-- <div  > @click="cancelFollow" -->
+                    <span v-else>已关注</span>
+                  <!-- </div> -->
                 </div>
                 <div class="bottom">
                   <li class="attention">关注<a href="#">{{state.userInfo.followee_count}}</a></li>
@@ -119,37 +119,8 @@ import {ElMessage, ElMessageBox, inputEmits} from "element-plus"
 import {getId, getItem} from "@/utils/login"
 import {userInfo} from "@/stores/userInfo"
 import router from "@/router";
+import type {IArticleInfo, IUserInfo} from "@/types/type"
 
-interface IProduction {
-  article_id: number;
-  user_id: number;
-  title: string;
-  create_time:string;
-  description: string;
-  img:string;
-}
-// interface IUserInfo{
-//   address:string;
-//   article_count:number;
-//   avatar:null
-//   birthday:string;
-//   chat:string;
-//   cover:string;
-//   create_time:string;
-//   description:string;
-//   email:string;
-//   followee_count:number;
-//   follower_count:number;
-//   inbox_unread:number;
-//   nick_name:string;
-//   notification_unread:number;
-//   password:string;
-//   phone:string;
-//   qq:string;
-//   sex:string;
-//   user_id:number;
-//   username:string;
-// }
 
 const userStore = userInfo();
 userStore.getUserInfo()
@@ -158,8 +129,8 @@ const route = useRoute();
 
 //数据收集
 const state = reactive({
-   dataInfo:{},
-   userInfo:{},
+   userInfo:<IUserInfo>{},
+   dataInfo:<IArticleInfo>{},
    input:'', //收集评论
    dialogVisible:false, //展示对话框
    comment:[],//文章评论
@@ -176,6 +147,7 @@ const commentValue = reactive<string []>([
   '真棒！', '楼主真腻害！', '楼主的技术真是惊为天人！', '阁下佩服', '请收下我的膝盖', '不明觉厉', '6', '腻害'
 ])
 
+
 //评论敏感词
 
 const errorComent = reactive<string []>([
@@ -189,10 +161,10 @@ const value = ref()
 onMounted(()=>{
   //获取文章详情信息
   getItemDetailInfo()
-  //获取用户信息
-  getUserInfo()
   //获取文章评论
   getCommentInfo()
+  //获取用户数据
+  getUserInfo()
   //获取用户关注
   getUserFollow()
   //获取用户作品数量
@@ -280,10 +252,11 @@ const giveLike = async (id:number)=>{
 
     if(data.code === 200){
       getItemDetailInfo();
-      return ElMessage({
+       ElMessage({
         message:data.msg,
         type:'success',
       })
+      return
     }
   } catch (error) {
     console.log(error);
@@ -307,10 +280,11 @@ const handleClose = (done: () => void) => {
 //关闭对话框,清空表单数据
 const closeDialog = async ()=>{
   if(state.form.region === ''){
-    return ElMessage({
+     ElMessage({
       message:'类型不能为空！',
       type:'error',
     })
+    return
   }
   
   // 提交举报信息
@@ -349,16 +323,18 @@ const addComment = (value:string)=>{
 //点击发送评论
 const sendComment = async ()=>{
   if(state.input.trim().length === 0){
-    return ElMessage({
+     ElMessage({
       message:'请填写内容！',
       type:'error',
     })
+    return
   }
    if(errorComent.includes(state.input.trim())){
-    return ElMessage({
+     ElMessage({
       message:'你的评论包含敏感词汇！',
       type:'error'
     })
+    return
    }
 
   //从路由中获取文章ID
@@ -367,9 +343,10 @@ const sendComment = async ()=>{
   const user_name = getItem('name');
   if(!user_name){
     router.push('/login')
-    return ElMessage({
+     ElMessage({
       message:'请前往登录页面登录'
     })
+    return
   }
   //发送请求
   try {
@@ -379,7 +356,7 @@ const sendComment = async ()=>{
       data:{
         article_id,
         user_id,
-        avatar:userStore.userInfo.avatar,
+        avatar:state.userInfo.avatar,
         username:userStore.name,
         content:state.input.trim(),
       }
@@ -390,10 +367,11 @@ const sendComment = async ()=>{
       state.input = '';
       //再次发送评论请求，更新评论
       getCommentInfo();
-      return ElMessage({
+       ElMessage({
         message:data.msg,
         type:'success'
       })
+      return
     }
   } catch (error) {
     
@@ -424,7 +402,7 @@ const followUser = async()=> {
       })
     }
     } catch (error) {
-      console.log(error);
+      throw error
     }
 }
 
@@ -438,14 +416,6 @@ const toPersonalCenter = (id:number)=>{
   })
 }
 
-//取消关注
-// const cancelFollow = async ()=>{
-//   try {
-//     const {data} = await requests(`detail/cancleFollow/${}`)
-//   } catch (error) {
-    
-//   }
-// }
 
 </script>
 <style lang='less' scoped>

@@ -47,7 +47,7 @@ let userRoutes = [
     path: "/:catchAll(.*)", // 不识别的path自动匹配404
     redirect: '/404',
   },
-  {path:'/share', name:'share',component:()=>import('../views/share/Share.vue'),  meta:{keepAlive: false}},
+  {path:'/share', name:'share',component:()=>import('../views/share/Share.vue'), meta:{keepAlive: true}},
   {path:'/editinfo', name:'editinfo', component:()=> import('../components/personalCenter/EditInfo.vue')},
   {
     path: '/search',
@@ -76,7 +76,7 @@ const router = createRouter({
   routes: userRoutes
 })
 
-let forbidPath = ['/personalCenter', '/share']
+let forbidPath = ['/personalCenter', '/share', '/map']
 
 router.beforeEach((to, from, next)=>{
   if(forbidPath.includes(to.path) && !getItem('name')){

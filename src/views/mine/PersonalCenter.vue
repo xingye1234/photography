@@ -1,43 +1,73 @@
 <template>
-  <div id="personal_center">
-    <TopHeader></TopHeader>
-    <img src="../../assets/banner/image/雪白唯美.jpeg" alt="" class="bg_img" />
-    <div class="edit_info" v-if="userStore.user_id === route.query.id">
-      <el-icon style="vertical-align: -2px; margin-right: 3px"><Edit /></el-icon
-      ><RouterLink to="/editinfo" >编辑信息</RouterLink>
-    </div>
-    <div class="avatar">
-      <img :src="state.userInfo.avatar" alt="" v-if="state.userInfo.avatar"/>
-      <img src="../../assets/个人中心/head180.png" alt=""  v-else/>
-      <div class="nick_name">{{ state.userInfo.username }}</div>
-      <div class="bottom">
-        <li class="attention">关注<a href="#">{{ state.userInfo.followee_count }}</a></li>
-        <li class="attention">粉丝<a href="#">{{ state.userInfo.follower_count }}</a></li>
-      </div>
-    </div>
+
+    <div id="personal_center">
+      <el-scrollbar height="100vh">
+        <TopHeader></TopHeader>
+        <img src="../../assets/banner/image/雪白唯美.jpeg" alt="" class="bg_img" />
+        <div class="edit_info" v-if="userStore.user_id === route.query.id">
+          <el-icon style="vertical-align: -2px; margin-right: 3px"><Edit /></el-icon
+          ><RouterLink to="/editinfo" >编辑信息</RouterLink>
+        </div>
+        <div class="avatar">
+          <img :src="state.userInfo.avatar" alt="" v-if="state.userInfo.avatar"/>
+          <img src="../../assets/个人中心/head180.png" alt=""  v-else/>
+          <div class="nick_name">{{ state.userInfo.username }}</div>
+          <div class="bottom">
+            <li class="attention" @click="readFollow">关注<a href="#">{{ state.userInfo.followee_count }}</a></li>
+            <li class="attention">粉丝<a href="#">{{ state.userInfo.follower_count }}</a></li>
+          </div>
+        </div>
 
     <!-- 导航区 -->
-    <div class="content">
-      <div class="control">
-        <Production :data-list="userProduct"></Production>
-      </div>
-    </div>
-    <!-- 底部 -->
-    <Footer></Footer>
+        <div class="content">
+          <div class="control">
+            <Production :data-list="userProduct"></Production>
+          </div>
+        </div>
+        <!-- 底部 -->
+        <Footer></Footer>
+      </el-scrollbar>
   </div>
 
-  
+  <Teleport to="#personal_center">
+        <div v-show="state.isShowFollowList" class="scrallbar-follow" @click="closeFollowList">
+            <!--  -->
+            <div class="follow-list" v-if="state.followList.length" >
+                <li v-for="(followItem, index) in state.followList" :key="followItem.id" 
+                @click="toPersonalCenter(followItem.to_id)">
+                    <img :src="followItem.avatar" alt="">
+                    <span>{{ followItem.username }}</span>
+                </li>
+            </div>
+            <div v-else class="follow-list">
+                暂无关注
+            </div>
+        </div>
+  </Teleport>
+
+    
 </template>
 <script setup lang="ts">
 import { RouterLink } from "vue-router";
 import TopHeader from "@/components/home/Header/TopHeader.vue";
 import Footer from "@/components/home/Footer.vue";
 import { userInfo } from "@/stores/userInfo";
-import {  ref,reactive,onMounted } from "vue";
+import {  watch,reactive,onMounted } from "vue";
 import Production from "@/components/personalCenter/Production.vue";
 import requests from "@/network/request";
 import {useRoute, useRouter } from "vue-router";
+import type { IUserInfo } from "@/types/type";
+import {getId} from '@/utils/login'
 
+interface IFollow{
+    avatar:string,
+    from_id:number,
+    id:number,
+    to_id:number,
+    username:string,
+}
+
+ 
 const route = useRoute()
 const router = useRouter()
 
@@ -54,7 +84,20 @@ const state = reactive({
   follower_count:'',
   followee_count:'',
   imgUrl:'',
-  userInfo:{}
+  userInfo:<IUserInfo>{},
+  isShowFollowList:false,
+  followList:<IFollow []>[]
+})
+
+//监听路由的变化
+watch(()=> route.query.id , (id)=>{
+  console.log('数据变化', id);
+
+  userProduct = [];
+  //获取用户作品
+  getUserProduct()
+  //获取用户信息
+  getUserInfo()
 })
 
 //从状态库中取出用户名
@@ -90,7 +133,7 @@ const getUserInfo = async ()=>{
   if(typeof id === 'undefined'){
     // console.log(userStore.user_id);
     const {data} = await requests(`/user/userInfo/${userStore.user_id}`)
-    console.log(data);
+    // console.log(data);
     state.userInfo = data.result[0];
   }else{
     const {data} = await requests(`/user/userInfo/${id}`)
@@ -101,12 +144,41 @@ const getUserInfo = async ()=>{
  }
 }
 
+//查看关注
+const readFollow = async () => {
+    state.isShowFollowList = !state.isShowFollowList
+
+    const id = getId()
+    const {data} = await requests(`/detail/readfollow/${id}`)
+    // console.log(data);
+    if(data.code === 200){
+        state.followList = data.data;
+    }
+};
+
+//查看用户信息
+const toPersonalCenter = (id:number)=>{
+    console.log(id);
+    router.push({
+        path:'/personalCenter', 
+        query:{
+            id
+        }
+    })
+}
+
+//关闭查看
+const closeFollowList =  () => {
+   state.isShowFollowList = false;
+};
+
 
 </script>
 
 <style lang='less' scoped>
 #personal_center {
   background-color: #ffffff;
+  overflow: hidden;
   .bg_img {
     width: 100%;
     height: 350px;
@@ -188,5 +260,38 @@ const getUserInfo = async ()=>{
       background-color: #f5f5f5;
     }
   }
+}
+
+.scrallbar-follow{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, .3);
+    
+    .follow-list{
+        width: 35%;
+        height: 50vh;
+        background-color: #eee;
+        padding: 15px;
+        box-sizing: border-box;
+        border-radius: 15px;
+       
+        img{
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+        span{
+            font-size: 30px;
+            vertical-align: top;
+            margin-left: 15px;
+        }
+    }
 }
 </style>

@@ -1,25 +1,21 @@
 <template>
   <div id="data-view">
     <div class="left">
+      <div class="echarts-wrap animate__animated animate__bounceInLeft"></div>
     </div>
     <div id="center" style="height: 100vh"></div>
     <div class="right">
-      <Transition name="slide-fade">
-      <ul v-if="cityData.length">
-        <!-- <li class="header-titile"><span>地区</span><span>人数</span></li>
-        <li v-for="(city, index) in cityData" :key="index" class="header-titile">
-          <span v-if="city.address">{{ city.address }}</span>
-          <span v-else>{{ city }}</span>
-          <span>{{ city.personCount }}</span>
-        </li> -->
-
+      <ul
+        v-if="cityData.length"
+        class="animate__animated animate__bounceInRight"
+      >
         <table border="1" cellspacing="0">
-            <thead>
-              <tr>
-                <th>地区</th>
-                <th>人数</th>
-              </tr>
-            </thead>
+          <thead>
+            <tr>
+              <th>地区</th>
+              <th>人数</th>
+            </tr>
+          </thead>
           <tbody>
             <tr v-for="(city, index) in cityData" :key="index">
               <td v-if="city.address">{{ city.address }}</td>
@@ -30,9 +26,7 @@
         </table>
       </ul>
       <div v-else>暂无数据</div>
-    </Transition>
     </div>
-    
   </div>
 </template>
 <script setup lang="ts">
@@ -40,12 +34,11 @@ import * as echarts from "echarts";
 import { onMounted, reactive } from "vue";
 import { dataMap } from "../../mapData";
 import "../../assets/china";
-import requests from "@/network/request"
-import { forEach } from "lodash";
+import requests from "@/network/request";
 
-interface IUserCpunt{
-  address:string;
-  personCount:number;
+interface IUserCpunt {
+  address: string;
+  personCount: number;
 }
 
 let cityData = reactive<IUserCpunt[]>([]);
@@ -73,7 +66,7 @@ onMounted(() => {
     { value: [108.384366, 30.439702], itemStyle: { color: "#b9be23" } },
     { value: [113.0823, 28.2568], itemStyle: { color: "#a6c62c" } },
     { value: [102.9199, 25.46639], itemStyle: { color: "#96cc34" } },
-    { value: [119.4543, 25.9222] , itemStyle: { color: "#96cc34" }},
+    { value: [119.4543, 25.9222], itemStyle: { color: "#96cc34" } },
   ];
 
   myEcharts.setOption({
@@ -202,71 +195,210 @@ onMounted(() => {
   });
 
   //点击事件
-  myEcharts.on("click", async (params)=>{
+  myEcharts.on("click", async (params) => {
     // console.log(params);
     const { name } = params;
     //清空数组
     cityData.splice(0, cityData.length);
+    const newMap = dataMap[name].map((item) => {
+      return { address: item, personCount: 0 };
+    });
     try {
-      const {data} = await requests(`/user/get_person/${name}`)
-      if(data.code === 200){
-        let userData = [] as any[];
-        let userCount = 0;
-        let noUserCount = 0;
-        data.data.forEach(item =>{
-          userData = dataMap[name].map(itemChildren => {
-           
-            if(item.includes(itemChildren)){
-              return{address:itemChildren, personCount:userCount++};
-            }else{
-              return {address:itemChildren, personCount:noUserCount}
-            }
-          })
-        })
-        
-        // //将数据添加到数组中
-        cityData.push(...userData);
+      const { data } = await requests(`/user/get_person/${name}`);
 
-      }else{
-        cityData.push(...dataMap[name]);
+      const initData = () => {
+        let salvProName = reactive<string[]>([]);
+        let salvProValue = reactive<number[]>([]);
+        //获取两个数组
+        newMap.forEach((item) => {
+          salvProName.push(item.address);
+          salvProValue.push(item.personCount);
+        });
+
+        return [salvProName, salvProValue];
+      };
+      if (data.code === 200) {
+        // data.data     dataMap[name]
+        newMap.forEach((item) => {
+          data.data.forEach((itemChildren) => {
+            if (itemChildren.includes(item.address)) {
+              item.personCount++;
+            }
+          });
+        });
+
+        // //将数据添加到数组中
+        cityData.push(...newMap);
+        const [salvProName, salvProValue] = initData();
+        //初始化地图
+        initLeftMap(salvProName, salvProValue);
+      } else {
+        cityData.push(...newMap);
+        const [salvProName, salvProValue] = initData();
+        //初始化地图
+        initLeftMap(salvProName, salvProValue);
       }
     } catch (error) {
       console.log(error);
     }
   });
 });
+
+const initLeftMap = (salvProName: string[], salvProValue: number[]) => {
+  let myEcharts2 = echarts.init(
+    document.querySelector(".echarts-wrap") as HTMLElement
+  );
+
+  /* let salvProName = [
+    "安徽省",
+    "河南省",
+    "浙江省",
+    "湖北省",
+    "贵州省",
+    "江西省",
+    "江苏省",
+    "四川省",
+    "云南省",
+    "湖南省",
+  ]; */
+
+  // var salvProValue = [239, 181, 154, 144, 135, 117, 74, 72, 67, 55];
+  var salvProMax = []; //背景按最大值
+  for (let i = 0; i < salvProValue.length; i++) {
+    salvProMax.push(salvProValue[0]);
+  }
+
+  let option = {
+    backgroundColor: "#13587a",
+    grid: {
+      left: "1%",
+      right: "1%",
+      bottom: "1%",
+      top: "1%",
+      containLabel: true,
+    },
+    tooltip: {
+      trigger: "axis",
+      axisPointer: {
+        type: "none",
+      },
+      formatter: function (params: any) {
+        return params[0].name + " : " + params[0].value;
+      },
+    },
+    xAxis: {
+      show: false,
+      type: "value",
+    },
+    yAxis: [
+      {
+        type: "category",
+        inverse: true,
+        axisLabel: {
+          show: true,
+          color: "#fff",
+        },
+        splitLine: {
+          show: false,
+        },
+        axisTick: {
+          show: false,
+        },
+        axisLine: {
+          show: false,
+        },
+        data: salvProName,
+      },
+      {
+        type: "category",
+        inverse: true,
+        axisTick: "none",
+        axisLine: "none",
+        show: true,
+        axisLabel: {
+          color: "#ffffff",
+          fontSize: "12",
+        },
+        data: salvProValue,
+      },
+    ],
+    series: [
+      {
+        name: "值",
+        type: "bar",
+        zlevel: 1,
+        itemStyle: {
+          // normal: {
+          barBorderRadius: 30,
+          color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+            {
+              offset: 0,
+              color: "rgb(57,89,255,1)",
+            },
+            {
+              offset: 1,
+              color: "rgb(46,200,207,1)",
+            },
+          ]),
+          // },
+        },
+        barWidth: 20,
+        data: salvProValue,
+      },
+      {
+        name: "背景",
+        type: "bar",
+        barWidth: 20,
+        barGap: "-100%",
+        data: salvProMax,
+        itemStyle: {
+          // normal: {
+          color: "rgba(24,31,68,1)",
+          barBorderRadius: 30,
+          // },
+        },
+      },
+    ],
+  };
+
+  myEcharts2.setOption(option);
+};
 </script>
-<style lang='less' scoped>
+<style lang="less" scoped>
 #data-view {
-  //   filter: grayscale(1);
+  // filter: grayscale(1);
   height: 100vh;
   display: flex;
   background: #013954;
   overflow: hidden;
   .left {
     width: 300px;
+    height: 100vh;
+    .echarts-wrap {
+      width: 100%;
+      height: 100%;
+    }
   }
   #center {
     flex: 1;
   }
   .right {
     width: 400px;
-    overflow: auto;
+    overflow: hidden;
     // background: blue;
-    table{
+    table {
       width: 100%;
       background-color: #13587a;
       color: white;
       text-align: center;
-      th{
+      th {
         white-space: nowrap;
       }
-      tr{
+      tr {
         padding: 5px;
       }
-     
     }
-    .header-titile{
+    .header-titile {
       display: flex;
       justify-content: space-between;
     }
@@ -279,24 +411,10 @@ onMounted(() => {
         color: #1de9b6;
         background: #0a162f;
       }
-      li:last-child{
+      li:last-child {
         border: none;
       }
     }
   }
-
-  .slide-fade-enter-active {
-  transition: all 0.3s ease-out;
-}
-
-.slide-fade-leave-active {
-  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
-}
-
-.slide-fade-enter-from,
-.slide-fade-leave-to {
-  transform: translateY(10px);
-  opacity: 0;
-}
 }
 </style>

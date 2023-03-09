@@ -8,10 +8,10 @@
       <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules"
         class="demo-ruleForm" :size="'default'" status-icon  >
         <el-form-item  prop="name" style="width:80%" >
-          <el-input v-model="ruleForm.name" :prefix-icon="User" />
+          <el-input v-model.trim="ruleForm.name" :prefix-icon="User" />
         </el-form-item>
         <el-form-item  prop="password" style="width:80%">
-          <el-input v-model="ruleForm.password" type="password" :prefix-icon="Lock" />
+          <el-input v-model.trim="ruleForm.password" type="password" :prefix-icon="Lock" />
         </el-form-item>
         <el-button type="primary" size="large" color="#18c5a3" @click="loginBtn" style="width:80%" >
           <span style="color:white">Login</span>
@@ -56,7 +56,7 @@ const rules = reactive<FormRules>({
 
 //登录按钮
 const loginBtn = async () => {
-  if (ruleForm.name.trim() !== "" && ruleForm.password.trim() !== "") {
+  if (ruleForm.name !== "" && ruleForm.password !== "") {
     const { data } = await requests({
       url: "user/login",
       method: "POST",
@@ -103,32 +103,6 @@ const loginBtn = async () => {
   }
 };
 
-//注册按钮
-const registerBtn = async () => {
-  if (ruleForm.address.trim() === "")
-    return ElMessage({ message: "请填写你所在的城市", type: "error" });
-  const { data } = await request({
-    url: "/user/register",
-    method: "POST",
-    data: {
-      name: ruleForm.name,
-      password: ruleForm.password,
-      address: ruleForm.address,
-    },
-  });
-  //判断是否注册成功
-  if (data.code === 200) {
-    return ElMessage({
-      message: "注册成功！",
-      type: "success",
-    });
-  } else {
-    ElMessage({
-      message: data.msg,
-      type: "error",
-    });
-  }
-};
 
 //重置密码按钮
 const restPassword = ()=>{

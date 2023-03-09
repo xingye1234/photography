@@ -11,7 +11,8 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import 'element-plus/dist/index.css'
 import locale from "element-plus/lib/locale/lang/zh-cn"; //汉化
 import VueLazyload from 'vue-lazyload'
-
+//导入animate样式
+import 'animate.css';
 import './assets/main.css'
 
 
@@ -25,7 +26,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 
 // new URL('./assets/loading.gif', import.meta.url).href解决加载静态资源，相当于reqiure
 
-//配置懒加载
+//配置懒加载图片
 app.use(VueLazyload, {
   preLoad: 1.3,
   loading: new URL('./assets/loading.gif', import.meta.url).href,

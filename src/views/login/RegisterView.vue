@@ -12,7 +12,7 @@
         :model="ruleForm"
         :rules="rules"
         class="demo-ruleForm"
-        :size="formSize"
+        size="default"
         status-icon
         label-position="left"
         label-width="80px"
@@ -24,7 +24,7 @@
           <el-input v-model="ruleForm.password" type="password" :prefix-icon="Lock" />
         </el-form-item>
         <el-form-item  prop="address" style="width:80%" label="Address">
-          <el-input v-model="ruleForm.address" :prefix-icon="Location" disabled="true"/>
+          <el-input v-model="address" :prefix-icon="Location" :disabled="true"/>
         </el-form-item>
         <el-form-item  prop="phone" style="width:80%" label="Phone">
           <el-input v-model="ruleForm.phone" :prefix-icon="Iphone"/>
@@ -33,10 +33,12 @@
           <el-input v-model="ruleForm.email" :prefix-icon="Folder"/>
         </el-form-item>
 
-        <el-button size="large" @click="registerBtn" color="#18c5a3" type="primary" style="width:80%">
+        <el-button size="large" @click="registerBtn" color="#18c5a3" type="primary" style="width:50%">
           <span style="color:white">Register</span>
-          </el-button
-        >
+        </el-button>
+        <el-button size="large" @click="resetForm(ruleFormRef)" color="#18c5a3" type="primary" style="width:30%">
+          <span style="color:white" >Reset</span>
+        </el-button>
       </el-form>
     </div>
   </div>
@@ -60,15 +62,14 @@ import AMapLoader from '@amap/amap-jsapi-loader';
 const router = useRouter();
 const route = useRoute();
 
-const formSize = ref("default");
 const ruleFormRef = ref<FormInstance>();
 const ruleForm = reactive({
   name: "",
   password: "",
-  address: "",
   phone:"",
   email:""
 });
+const address = ref('')
 
 onMounted(()=>{
   initMap()
@@ -94,15 +95,13 @@ const rules = reactive<FormRules>({
 });
 //注册按钮
 const registerBtn = async () => {
-  if (ruleForm.address.trim() === "")
-    return ElMessage({ message: "请填写你所在的城市", type: "error" });
   const { data } = await requests({
     url: "/user/register",
     method: "POST",
     data: {
       username: ruleForm.name,
       password: ruleForm.password,
-      address: ruleForm.address,
+      address: address.value,
       phone: ruleForm.phone,
       email: ruleForm.email,
     },
@@ -122,6 +121,16 @@ const registerBtn = async () => {
   }
 };
 
+//重置表单
+const resetForm = (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  formEl.resetFields()
+  return ElMessage({
+    type:'success',
+    message:'数据已清空'
+  })
+}
+
 const initMap = ()=>{
     AMapLoader.load({
               key:"da6bd131d4dd8c8eca5b7e0743aa4c5d",             // 申请好的Web端开发者Key，首次调用 load 时必填
@@ -136,7 +145,7 @@ const initMap = ()=>{
               let city = new AMap.CitySearch()
                 city.getLocalCity((status, result)=>{
                   if(status === "complete"){
-                    ruleForm.address = result.province+result.city;
+                    address.value = result.province+result.city;
                     return ElMessage({
                       message:`您当前所在城市${result.province+result.city}`
                     })

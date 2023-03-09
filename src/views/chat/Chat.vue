@@ -2,14 +2,16 @@
 <div id="chat">
     <!-- 消息列表 -->
     <ul class="content-wrap">
-        <li :class="{content_list_right:item.user_id == id, 'content_list':item.user_id != id}"  v-for="(item, index) in contentList" :key="index">
-            <div class="avatar" @click="toPersonalCenter(item.user_id)">
-                <img :src="item.avatar" alt="">
-            </div>
-            <div class="name">{{ item.name }}</div>
-            <div class="text">{{ item.text }}</div>
-            <div class="time">{{ item.time }}</div>
-        </li>
+        <el-scrollbar>
+            <li :class="{content_list_right:item.user_id == id, 'content_list':item.user_id != id}"  v-for="(item, index) in contentList" :key="index">
+                <div class="avatar" @click="toPersonalCenter(item.user_id)">
+                    <img :src="item.avatar" alt="">
+                </div>
+                <div class="name">{{ item.name }}</div>
+                <div class="text">{{ item.text }}</div>
+                <div class="time">{{ item.time }}</div>
+            </li>
+        </el-scrollbar>
     </ul>
     <span class="close" @click="closeChat"><el-icon size="25px" color="white"><Close /></el-icon></span>
     <div class="user"><el-icon><User /></el-icon><span>{{ personCount }}</span></div>
@@ -166,7 +168,7 @@ const toPersonalCenter = (id:string)=>{
             display: flex;
             flex-direction: row-reverse;
             position: relative;
-            padding: 15px 3px;
+            padding: 15px 30px 15px 3px;
             .avatar{
                 margin-left: 5px;
                 img{

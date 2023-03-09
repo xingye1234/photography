@@ -21,6 +21,8 @@
           list-type="picture-card"
           :on-preview="handlePictureCardPreview"
           :on-remove="handleRemove"
+          :multiple="true"
+          :drag="true"
         >
           <el-icon><Plus /></el-icon>
         </el-upload>

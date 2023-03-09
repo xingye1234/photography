@@ -19,7 +19,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, defineProps,reactive } from "vue";
+import { ref,reactive } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();

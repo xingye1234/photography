@@ -11,19 +11,17 @@
                     <div class="user-top">
                         <div class="user-top-left" @click="toPersonalCenter(item.user_id)">
                             <img :src="item.avatar" alt="" v-if="item.avatar">
-                            <img src="../assets/个人中心/head180.png" alt="" v-else/>
+                            <img src="../../assets/个人中心/head180.png" alt="" v-else/>
                             <span>{{ item.username }}</span>
                         </div>
                         <div class="user-top-right">
                             <div class="follow">
-                                <div @click="followUser(item.user_id, item.username, item.avatar)">
-                                    <template v-if="item.showFollow">
-                                        <el-icon><Plus /></el-icon>
-                                        <span>关注</span>
-                                    </template>
-                                    <template v-if="!item.showFollow">
-                                        <span>已关注</span>
-                                    </template>
+                                <div @click="followUser(item.user_id, item.username, item.avatar)" v-if="!item.isFollow">
+                                    <el-icon><Plus /></el-icon>
+                                    <span>关注</span>
+                                </div>
+                                <div @click="unFollow(item.user_id)" v-else>
+                                     <span >已关注</span>
                                 </div>
                             </div>
                         </div>
@@ -63,11 +61,11 @@
         <div class="right_warp">
             <div class="user-avatar">
                 <img :src="userStore.userInfo.avatar" alt="" v-if="userStore.userInfo.avatar">
-                <img src="../assets/个人中心/head180.png" alt="" v-else/>
+                <img src="../../assets/个人中心/head180.png" alt="" v-else/>
                 <span>{{ userStore.userInfo.username }}</span>
             </div>
             <div class="user-detail">
-                <li>关注
+                <li @click="readFollow">关注
                     <span>{{userStore.userInfo.followee_count}}</span>
                 </li>
                 <li>粉丝
@@ -76,6 +74,7 @@
                 <li @click="readProduct" class="production">作品
                     <span>{{ state.count }}</span>
                 </li>
+                
             </div>
 
             <div class="address" @click="addressBtn">
@@ -110,6 +109,7 @@
           list-type="picture-card"
           :on-preview="handlePictureCardPreview"
           :on-remove="handleRemove"
+          :drag="true"
         >
           <el-icon><Plus /></el-icon>
         </el-upload>
@@ -146,40 +146,62 @@
 
     <!-- 聊天频道 -->
     <Chat v-if="state.showChat" @close-chat="closeChat"></Chat>
+
+    <Teleport to="body">
+        <div v-show="state.isShowFollowList" class="scrallbar-follow" @click="closeFollowList">
+            <!--  -->
+            <div class="follow-list" v-if="state.followList.length" >
+                <li v-for="(followItem, index) in state.followList" :key="followItem.id" 
+                @click="toPersonalCenter(followItem.to_id)">
+                    <img :src="followItem.avatar" alt="">
+                    <span>{{ followItem.username }}</span>
+                </li>
+            </div>
+            <div v-else class="follow-list">
+                暂无关注
+            </div>
+        </div>
+    </Teleport>
 </div>
 </template>
 <script setup lang="ts">
 import { articleInfo } from '@/stores/article';
 import { userInfo } from '@/stores/userInfo';
-import { onMounted, reactive, ref } from 'vue';
+import { reactive, ref, onBeforeMount } from 'vue';
 import TopHeader from '../../components/home/Header/TopHeader.vue';
 import Camera from '../../components/Camera.vue';
 import { useRouter } from 'vue-router';
-import { ElMessage,ElMessageBox } from 'element-plus';
+import { ElMessage } from 'element-plus';
 import requests from "@/network/request";
 import Map from '@/components/map/Map.vue'
 import type { UploadProps, UploadUserFile,UploadRawFile, UploadFile, UploadFiles} from "element-plus";
 import Chat from '@/views/chat/Chat.vue';
-
-import type { IArticle } from '@/stores/articleType';
+import { getId } from '@/utils/login';
 
 const articleStore = articleInfo();
 const userStore = userInfo()
 const router = useRouter();
 
-//获取用户数据
-userStore.getUserInfo();
+interface IFollow{
+    avatar:string,
+    from_id:number,
+    id:number,
+    to_id:number,
+    username:string,
+}
 
 
 
-onMounted(()=>{
-    //获取文章
-    getArticle()
-    //获取用户关注
-    getUserFollow()
-    //获取用户作品
+
+onBeforeMount(()=>{
+    //获取用户数据
+    userStore.getUserInfo();
+     //获取文章
+     getArticle()
+     //获取用户作品
     getUserProduct()
 })
+
 
 const dialogFormVisible = ref(false);
 const dialogVisible = ref(false);
@@ -192,48 +214,126 @@ const form = reactive({
 // 需要上传的照片
 const fileList = ref<UploadUserFile[]>([]);
 const state = reactive({
-    showFollow:false,
     count:0,
     showMap:false,
     dialogVisible:false,
     inputContent:'',
     address:'',
     showChat:false,
+    followList:<IFollow []>[],
+    isShowFollowList:false,
 })
 
 
 //获取文章数据
-const getArticle = ()=>{
-    articleStore.getArticleInfo()
+const getArticle = async ()=>{
+    await articleStore.getArticleInfo();
+
+    //请求用户关注
+    const  getUserFollow = async ()=> {
+        try {
+            const {data} = await requests(`/detail/user_follow/${userStore.userInfo.user_id}`);
+            // console.log(data);
+            if(data.code === 200){
+            articleStore.articleInfo.forEach(articleItem => {
+                data.data.forEach(followItem => {
+                    if(articleItem.user_id === followItem.to_id){
+                        articleItem.isFollow = true;
+                    }else{
+                        articleItem.isFollow = false;
+                    }
+                });
+                // console.log(articleItem.isFollow);
+            })
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    getUserFollow()
 }
 
-//请求用户关注
-const getUserFollow = async ()=> {
-   try {
-    const {data} = await requests(`/detail/user_follow/${userStore.userInfo.user_id}`);
+
+
+//关注按钮
+const followUser = async(user_id:number, username:string, avatar:string)=> {
+    try {
+      const {data} = await requests({
+      url:'detail/follow',
+      method: 'POST',
+      data:{
+        to:user_id, //被关注者id
+        from:userStore.userInfo.user_id, // 关注者id
+        username, //被关注者用户名
+        avatar//被关注者头像
+      }
+    })
+
+    if(data.code === 200){
+      //获取文章数据
+      getArticle();
+      //获取用户数据
+      userStore.getUserInfo();
+      
+      return ElMessage({
+        message:data.msg,
+        type:"success",
+      })
+    }
+    } catch (error) {
+      console.log(error);
+    }
+}
+
+//取消关注
+const unFollow = async (toId:number) => {
+    // console.log(id);
+    const {data} = await requests({
+        url:'/detail/unfollow',
+        method: 'POST',
+        data:{
+            to_id: toId,//被关注者id,
+            from_id: getId() //关注者id
+        }
+    })
     // console.log(data);
     if(data.code === 200){
-       articleStore.articleInfo.forEach(articleItem => {
-           data.data.forEach(followItem => {
-               if(articleItem.user_id === followItem.to_id){
-                articleItem.showFollow = false;
-               }else{
-                 articleItem.showFollow = true;
-               }
-           });
-        //    console.log(articleItem.showFollow);
-       })
+        ElMessage({
+            type:'success',
+            message:data.msg
+        })
+        //更新文章数据
+        getArticle();
+         //更新用户数据
+        userStore.getUserInfo();
+        return ;
     }
-   } catch (error) {
-    console.log(error);
-   }
-}
+};
+
+
+//查看关注
+const readFollow = async () => {
+    state.isShowFollowList = !state.isShowFollowList
+
+    const id = getId()
+    const {data} = await requests(`/detail/readfollow/${id}`)
+    // console.log(data);
+    if(data.code === 200){
+        state.followList = data.data;
+    }
+};
+
+//关闭查看
+const closeFollowList =  () => {
+   state.isShowFollowList = false;
+};
 
 //请求用户作品
 const getUserProduct = async ()=>{
-    // console.log(userStore.userInfo.user_id);
+    userStore.getId()
     try {
-        const {data} = await requests(`/detail/userProduct/${userStore.userInfo.user_id}`);
+        const {data} = await requests(`/detail/userProduct/${userStore.user_id}`);
         // console.log(data);
         if(data.code === 200){
             state.count = data.data;
@@ -272,32 +372,7 @@ const likeBtn = async (id:number)=>{
   }
 }
 
-//关注按钮
-const followUser = async(user_id:number, username:string, avatar:string)=> {
-    try {
-      const {data} = await requests({
-      url:'detail/follow',
-      method: 'POST',
-      data:{
-        to:user_id, //被关注者id
-        from:userStore.userInfo.user_id, // 关注者id
-        username, //被关注者用户名
-        avatar//被关注者头像
-      }
-    })
 
-    if(data.code === 200){
-      
-      state.showFollow = data.isFollow;
-      return ElMessage({
-        message:data.msg,
-        type:"success",
-      })
-    }
-    } catch (error) {
-      console.log(error);
-    }
-}
 
 //查看作品
 const readProduct = ()=>{
@@ -520,6 +595,7 @@ const closeChat = ()=>{
         box-sizing: border-box;
         border: 1px solid #e9e9e9;
         border-radius: 3px;
+       
         .user-avatar{
             .box-padding();
             border-bottom: 1px solid #e9e9e9;
@@ -537,6 +613,7 @@ const closeChat = ()=>{
         .user-detail{
             display: flex;
             border-bottom: 1px solid #e9e9e9;
+            position: relative;
             li{
                 border-right: 1px solid #e9e9e9;
                 line-height: 50px;
@@ -547,6 +624,8 @@ const closeChat = ()=>{
                 color: #18c5A3;
                 cursor: pointer;
             }
+            
+            
         }
         .address{
             padding: 25px;
@@ -564,6 +643,38 @@ const closeChat = ()=>{
             span{
                 margin-left: 5px;
             }
+        }
+    }
+}
+.scrallbar-follow{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, .3);
+    
+    .follow-list{
+        width: 35%;
+        height: 50vh;
+        background-color: #eee;
+        padding: 15px;
+        box-sizing: border-box;
+        border-radius: 15px;
+       
+        img{
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+        span{
+            font-size: 30px;
+            vertical-align: top;
+            margin-left: 15px;
         }
     }
 }

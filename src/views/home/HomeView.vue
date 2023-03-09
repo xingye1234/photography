@@ -89,7 +89,7 @@ const topBtnScroll = ref(0)
 onMounted(() => {
   getGreateProduction();
   //获取用户信息
-  getUserInfo();
+  userStore.getUserInfo();
 });
 
 const currentIndex = ref(0);
@@ -101,35 +101,10 @@ const carouselChange = (current: number, pre: number) => {
 
 //获取优秀作品
 const getGreateProduction = ()=>{
-  // try {
-  //   const {data} = await requests('/article')
-  //   // console.log(data);
-  //   greateProduction.push(...data.data)
-  // } catch (error) {
-  //   console.log(error);
-  // }
-  
+ 
   // 使用仓库存储数据
   articleStore.getArticleInfo()
-
 }
-
-//获取用户信息
-const getUserInfo = async () => {
-  try {
-    const { data } = await requests(
-      `/user/userInfo/${localStorage.getItem("id")}`
-    );
-    // console.log(data.result[0]);
-    if(data.code === 200){
-      userStore.userInfo = data.result[0]
-      sessionStorage.setItem("userInfo", JSON.stringify(userStore.userInfo))
-      userStore.getUserInfo();
-    }
-  } catch (error) {
-    console.log(error);
-  }
-};
 
 
 </script>

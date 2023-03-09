@@ -48,7 +48,7 @@
           <div>
             <img :src="userStore.userInfo.avatar" alt="" v-if="userStore.userInfo.avatar" class="avatar"/>
             <img class="avatar" src="../../../assets/个人中心/head180.png" alt="" v-else/>
-            <span class="text">{{ userStore.name }}</span>
+            <span class="text">{{ userStore.name }}  </span>
             <el-icon class="el-icon--right" color="#18C5A3"><arrow-down /></el-icon>
           </div>
       <template #dropdown>
@@ -57,7 +57,7 @@
             <el-upload
               class="upload-demo"
               action="http://localhost:9527/user/avatar"
-              :data="{id:getId('id')}"
+              :data="{id:getId()}"
               :show-file-list="false"
               :on-success="handleAvatarSuccess"
               :before-upload="beforeAvatarUpload"
@@ -96,7 +96,7 @@
   </template>
   
   <script setup lang="ts">
-  import { ref, onActivated, onMounted } from "vue";
+  import { ref, onMounted } from "vue";
   import { ElMessage,ElMessageBox } from "element-plus";
   import { Search } from "@element-plus/icons-vue";
   import { searchLog } from "@/stores/searchLog";

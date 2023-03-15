@@ -125,8 +125,6 @@ import { ElMessage } from "element-plus";
 import type { FormInstance, FormRules } from "element-plus";
 import { dataMap, cities } from "@/mapData";
 import requests from "@/network/request";
-import { getId } from "@/utils/login";
-
 //从状态库中取出用户名
 const userStore = userInfo();
 //调用pinia中的getName方法

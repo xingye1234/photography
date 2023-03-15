@@ -20,6 +20,7 @@
           @focus="isShowPanel = true"
           maxlength="128"
           size="small"
+          @keydown.enter="searchBtn"
         />
         <el-button style="color:white" color="#18C5A3" @click="searchBtn" size="small">搜索</el-button>
         <!-- 搜索版块信息 -->

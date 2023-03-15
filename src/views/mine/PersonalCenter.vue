@@ -1,5 +1,4 @@
 <template>
-
     <div id="personal_center">
       <el-scrollbar height="100vh">
         <TopHeader></TopHeader>
@@ -91,7 +90,6 @@ const state = reactive({
 
 //监听路由的变化
 watch(()=> route.query.id , (id)=>{
-  console.log('数据变化', id);
 
   userProduct = [];
   //获取用户作品
@@ -112,7 +110,7 @@ const getUserProduct = async ()=>{
   const {id} = route.query;
   // console.log(id);
  try {
-  if(typeof id === 'undefined'){
+  if(!id){
     // console.log(userStore.user_id);
     const {data} = await requests(`/user/production/${userStore.user_id}`)
     // console.log(data);

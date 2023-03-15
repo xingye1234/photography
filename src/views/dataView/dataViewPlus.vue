@@ -249,20 +249,6 @@ const initLeftMap = (salvProName: string[], salvProValue: number[]) => {
     document.querySelector(".echarts-wrap") as HTMLElement
   );
 
-  /* let salvProName = [
-    "安徽省",
-    "河南省",
-    "浙江省",
-    "湖北省",
-    "贵州省",
-    "江西省",
-    "江苏省",
-    "四川省",
-    "云南省",
-    "湖南省",
-  ]; */
-
-  // var salvProValue = [239, 181, 154, 144, 135, 117, 74, 72, 67, 55];
   var salvProMax = []; //背景按最大值
   for (let i = 0; i < salvProValue.length; i++) {
     salvProMax.push(salvProValue[0]);
@@ -373,7 +359,7 @@ const initLeftMap = (salvProName: string[], salvProValue: number[]) => {
   overflow: hidden;
   .left {
     width: 300px;
-    height: 100vh;
+    height: 80vh;
     .echarts-wrap {
       width: 100%;
       height: 100%;

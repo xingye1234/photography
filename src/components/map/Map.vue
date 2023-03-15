@@ -50,7 +50,7 @@ const initMap = ()=>{
             map = new AMap.Map(document.querySelector('.map-view'),{  //设置地图容器id
                 viewMode:"3D",    //是否为3D地图模式
                 zoom:14,           //初始化地图级别
-                center:[115.8953547,29.61521454116]
+                // center:[115.8953547,29.61521454116]  
             });
             //获取当前城市定位
             let city = new AMap.CitySearch()
@@ -76,8 +76,10 @@ const initMap = ()=>{
               marker.setPosition(lnglatValue);
               
               geocoder.getAddress(lnglatValue, function(status, result) {
+                // console.log(result.rectangle.split(';')[0]);
                 if (status === 'complete' && result.info === 'OK') {
                     // console.log(result);
+                    
                     info.address = result.regeocode.formattedAddress;
                     
                 }else{

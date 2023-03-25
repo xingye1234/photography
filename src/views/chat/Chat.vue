@@ -28,7 +28,7 @@
     </div>
     <div class="input-content">
       <el-input
-        v-model="message"
+        v-model.trim="message"
         placeholder="请输入信息"
         :type="inputType"
         @keydown.enter="sendMsg"
@@ -71,7 +71,7 @@ const personCount = ref(0);
 //监听信息输入框的内容长度
 watch(message, () => {
   // console.log(message.value.trim().length);
-  if (message.value.trim().length >= 50) {
+  if (message.value.length >= 50) {
     inputType.value = "textarea";
   } else {
     inputType.value = "text";
@@ -101,7 +101,7 @@ socket.on("disconnect", () => {
 
 //发送消息
 const sendMsg = () => {
-  if (message.value.trim().length === 0) {
+  if (message.value.length === 0) {
     return ElMessage({
       message: "消息不能为空",
       type: "error",

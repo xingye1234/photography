@@ -31,7 +31,10 @@
                     v-else
                   />
                   <div class="nick_name">{{ state.userInfo.username }}</div>
-                  <div class="follow">
+                  <div
+                    class="follow"
+                    v-if="state.userInfo.user_id === +userStore.user_id"
+                  >
                     <div v-if="!state.showFollow" @click="followUser">
                       <el-icon><Plus /></el-icon>
                       <span>关注</span>
@@ -480,7 +483,7 @@ const toPersonalCenter = (id: number) => {
     query: {
       id,
     },
-  })
+  });
 };
 </script>
 <style lang="less" scoped>

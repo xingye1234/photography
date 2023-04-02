@@ -15,7 +15,7 @@
                             <span>{{ item.username }}</span>
                         </div>
                         <div class="user-top-right">
-                            <div class="follow">
+                            <div class="follow" v-if="item.user_id !== +userStore.user_id">
                                 <div @click="followUser(item.user_id, item.username, item.avatar)" v-if="!item.isFollow">
                                     <el-icon><Plus /></el-icon>
                                     <span>关注</span>
@@ -66,13 +66,13 @@
             </div>
             <div class="user-detail">
                 <li @click="readFollow">关注
-                    <span>{{userStore.userInfo.followee_count}}</span>
+                    <span>{{userStore.userInfo.followee_count ? userStore.userInfo.followee_count:0}}</span>
                 </li>
                 <li>粉丝
-                    <span>{{ userStore.userInfo.follower_count }}</span>
+                    <span>{{ userStore.userInfo.follower_count ? userStore.userInfo.follower_count:0}}</span>
                 </li>
                 <li @click="readProduct" class="production">作品
-                    <span>{{ state.count }}</span>
+                    <span>{{ state.count? state.count:0 }}</span>
                 </li>
                 
             </div>

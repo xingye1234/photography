@@ -205,6 +205,7 @@ onMounted(() => {
     });
     try {
       const { data } = await requests(`/user/get_person/${name}`);
+      console.log(data);
 
       const initData = () => {
         let salvProName = reactive<string[]>([]);

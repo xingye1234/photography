@@ -5,12 +5,34 @@
       <el-container>
         <el-aside width="200px" style="height: 90vh">
           <div class="avatar" style="border-bottom: 1px solid #e9e9e9">
-            <img :src="userStore.userInfo.avatar" alt="" class="avatar_img" v-if="userStore.userInfo.avatar"/>
-            <img src="../../assets/个人中心/head180.png" alt="" class="avatar_img" v-else/>
+            <img
+              :src="userStore.userInfo.avatar"
+              alt=""
+              class="avatar_img"
+              v-if="userStore.userInfo.avatar"
+            />
+            <img
+              src="../../assets/个人中心/head180.png"
+              alt=""
+              class="avatar_img"
+              v-else
+            />
             <div class="nick_name">{{ userStore.name }}</div>
             <div class="bottom">
-              <li class="attention">关注<a href="#">{{ userStore.userInfo.followee_count }}</a></li>
-              <li class="attention">粉丝<a href="#">{{ userStore.userInfo.follower_count }}</a></li>
+              <li class="attention">
+                关注<a href="#">{{
+                  userStore.userInfo.followee_count
+                    ? userStore.userInfo.followee_count
+                    : 0
+                }}</a>
+              </li>
+              <li class="attention">
+                粉丝<a href="#">{{
+                  userStore.userInfo.follower_count
+                    ? userStore.userInfo.follower_count
+                    : 0
+                }}</a>
+              </li>
               <li class="attention">作品<a href="#">0</a></li>
             </div>
           </div>
@@ -40,7 +62,7 @@
                   <el-input v-model="ruleForm.nickName" />
                 </el-form-item>
               </el-col>
-              <el-form-item label="性别" >
+              <el-form-item label="性别">
                 <el-radio-group v-model="ruleForm.sex">
                   <el-radio label="男" />
                   <el-radio label="女" />
@@ -142,8 +164,8 @@ const ruleForm = reactive({
   address2: "",
   desc: "",
   birthday: "",
-  phone: "",
-  mail: "",
+  phone: userStore.userInfo.phone,
+  mail: userStore.userInfo.email,
   chat: "",
   qq: "",
 });
@@ -153,9 +175,9 @@ const rules = reactive<FormRules>({
     { required: true, message: "请输入用户名", trigger: "blur" },
     { min: 3, max: 5, message: "字符长度为3-5", trigger: "blur" },
   ],
-  sex:[{required:true, message:"请选择你的性别"}],
+  sex: [{ required: true, message: "请选择你的性别" }],
   address1: [{ required: true }],
-  nickName: [{ required: true ,message: "请输入你的昵称"}],
+  nickName: [{ required: true, message: "请输入你的昵称" }],
   phone: [{ required: true, message: "请输入你的号码" }],
   mail: [{ required: true, message: "请输入你的邮箱" }],
 });
@@ -206,9 +228,8 @@ const resetForm = (formEl: FormInstance | undefined) => {
     type: "success",
   });
 };
-
 </script>
-<style lang='less' scoped>
+<style lang="less" scoped>
 #edit_info {
   .radius {
     border-radius: 5px;

@@ -2,52 +2,62 @@
   <div id="production">
     <h3>作品</h3>
     <div class="production-wrap">
-      <el-row :gutter="10">
-      <el-col v-for="(item, index) in dataList" :key="item.article_id" :span="6" >
-        <el-card :body-style="{ padding: '10px' }" shadow="hover"
-          style="margin-bottom: 20px; cursor: pointer"
-          @click="toDetail(item.article_id, item.user_id)" >
-          <img :src="item.img" class="image" />
-        </el-card>
-      </el-col>
-    </el-row>
+      <template v-if="dataList?.length">
+        <el-row :gutter="10">
+          <el-col
+            v-for="(item, index) in dataList"
+            :key="item.article_id"
+            :span="6"
+          >
+            <el-card
+              :body-style="{ padding: '10px' }"
+              shadow="hover"
+              style="margin-bottom: 20px; cursor: pointer"
+              @click="toDetail(item.article_id, item.user_id)"
+            >
+              <img :src="item.img" class="image" />
+            </el-card>
+          </el-col>
+        </el-row>
+      </template>
+      <template v-else> 
+        <span>您还没有作品，快来发布作品吧！</span> 
+      </template>
     </div>
   </div>
-
-  
 </template>
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
-import type {IArticleInfo} from "@/types/type"
+import { useRouter } from "vue-router";
+import type { IArticleInfo } from "@/types/type";
 
 defineProps<{
   dataList?: Array<IArticleInfo>;
 }>();
 
-const router = useRouter()
+const router = useRouter();
 
 //查看详情
-const toDetail = (article_id:number, user_id:number) => {
+const toDetail = (article_id: number, user_id: number) => {
   router.push({
     path: "/detail",
     query: {
-     article_id,
-     user_id,
-    }
+      article_id,
+      user_id,
+    },
   });
 };
 </script>
-<style lang='less' scoped>
-#production{
+<style lang="less" scoped>
+#production {
   width: 100%;
   padding: 10px 10px 0;
   box-sizing: border-box;
-  h3{
+  h3 {
     text-align: center;
     color: red;
   }
 }
-.production-wrap{
+.production-wrap {
   padding: 10px;
   box-sizing: border-box;
   background-color: #eee;

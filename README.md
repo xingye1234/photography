@@ -40,4 +40,9 @@ Echarts: 数据可视化
 node.js: 设计后台数据
 animate.css: npm install animate.css -S
 npm install socket.io-client: 聊天交互
+<<<<<<< HEAD
 npm i vue-lazyload -S 图片懒加载"# photography"
+=======
+npm i vue-lazyload -S 图片懒加载"# photography" 
+
+>>>>>>> b4950bce067866765e43cdf68cb8ca851a9797ed

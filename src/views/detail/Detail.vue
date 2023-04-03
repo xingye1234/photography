@@ -31,10 +31,7 @@
                     v-else
                   />
                   <div class="nick_name">{{ state.userInfo.username }}</div>
-                  <div
-                    class="follow"
-                    v-if="state.userInfo.user_id === +userStore.user_id"
-                  >
+                  <div class="follow" v-if="isShowFollow">
                     <div v-if="!state.showFollow" @click="followUser">
                       <el-icon><Plus /></el-icon>
                       <span>关注</span>
@@ -166,7 +163,7 @@ import TopHeader from "@/components/home/Header/TopHeader.vue";
 import Footer from "@/components/home/Footer.vue";
 import { useRoute, useRouter } from "vue-router";
 import requests from "@/network/request";
-import { onMounted, ref, reactive } from "vue";
+import { onMounted, ref, reactive, computed } from "vue";
 import { ElMessage, ElMessageBox, inputEmits } from "element-plus";
 import { getId, getItem } from "@/utils/login";
 import { userInfo } from "@/stores/userInfo";
@@ -201,6 +198,12 @@ const state = reactive({
   }, //举报表单
   showFollow: false, //控制显示关注按钮
   productCount: 0,
+});
+
+const isShowFollow = computed(() => {
+  userStore.getId();
+  // console.log(state.userInfo.user_id, "userStore:", +userStore.user_id);
+  return state.userInfo.user_id !== +userStore.user_id;
 });
 
 //快捷评论

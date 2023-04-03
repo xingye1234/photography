@@ -205,7 +205,7 @@ onMounted(() => {
     });
     try {
       const { data } = await requests(`/user/get_person/${name}`);
-      console.log(data);
+      // console.log(data);
 
       const initData = () => {
         let salvProName = reactive<string[]>([]);
@@ -218,6 +218,7 @@ onMounted(() => {
 
         return [salvProName, salvProValue];
       };
+    
       if (data.code === 200) {
         // data.data     dataMap[name]
         newMap.forEach((item) => {
@@ -228,7 +229,7 @@ onMounted(() => {
           });
         });
 
-        // //将数据添加到数组中
+        //将数据添加到数组中
         cityData.push(...newMap);
         const [salvProName, salvProValue] = initData();
         //初始化地图
@@ -245,7 +246,9 @@ onMounted(() => {
   });
 });
 
-const initLeftMap = (salvProName: string[], salvProValue: number[]) => {
+type arrayType = string[] | number [];
+
+const initLeftMap = (salvProName: arrayType, salvProValue:arrayType) => {
   let myEcharts2 = echarts.init(
     document.querySelector(".echarts-wrap") as HTMLElement
   );

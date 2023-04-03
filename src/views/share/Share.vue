@@ -63,6 +63,7 @@
                 <img :src="userStore.userInfo.avatar" alt="" v-if="userStore.userInfo.avatar">
                 <img src="../../assets/个人中心/head180.png" alt="" v-else/>
                 <span>{{ userStore.userInfo.username }}</span>
+                <span class="user-description">个性签名:{{ userStore.userInfo.description ? userStore.userInfo.description: '暂无描述' }}</span>
             </div>
             <div class="user-detail">
                 <li @click="readFollow">关注
@@ -583,6 +584,7 @@ const closeChat = ()=>{
         padding: 0 20px 10px;
         box-sizing: border-box;
     }
+    
     .right_warp{
         width: 20%;
         height: 92vh;
@@ -609,7 +611,14 @@ const closeChat = ()=>{
                 margin-left: 5px;
                 font-size: 20px;
             }
+            .user-description{
+                font-size:12px; 
+                position:relative;
+                top:20px;
+                left:-38px;
+            }
         }
+       
         .user-detail{
             display: flex;
             border-bottom: 1px solid #e9e9e9;

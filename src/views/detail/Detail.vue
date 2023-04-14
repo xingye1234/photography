@@ -354,7 +354,7 @@ const handleClose = (done: () => void) => {
     });
 };
 
-//关闭对话框,清空表单数据
+//关闭对话框,提交举报信喜,清空表单数据
 const closeDialog = async () => {
   if (state.form.region === "") {
     ElMessage({
@@ -371,7 +371,9 @@ const closeDialog = async () => {
       method: "POST",
       data: {
         reportable_id: route.query.user_id,
-        user_id: userStore.userInfo.user_id,
+        article_id: state.dataInfo.article_id,
+        username: state.userInfo.username,
+        article_name:state.dataInfo.title,
         type: state.form.region,
         description: state.form.desc,
       },

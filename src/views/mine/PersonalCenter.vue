@@ -104,7 +104,7 @@ const state = reactive({
 });
 
 const isShowEdit = computed(() => {
-  console.log(userStore.user_id, "route:", route.query.id);
+  // console.log(userStore.user_id, "route:", route.query.id);
   return userStore.user_id === route?.query?.id;
 });
 

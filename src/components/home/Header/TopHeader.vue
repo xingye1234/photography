@@ -53,7 +53,7 @@ import { ref, h } from "vue";
 import { userInfo } from "@/stores/userInfo";
 import { removeItem } from "@/utils/login";
 import { ElMessageBox, ElMessage } from "element-plus";
-import { getId } from "@/utils/login";
+import { getId, removeId } from "@/utils/login";
 
 const dialogVisible = ref(false);
 
@@ -81,6 +81,7 @@ function logOut() {
   dialogVisible.value = false;
   // 删除localStorage中的name
   removeItem("name");
+  removeId();
   ElMessage({
     message: "退出成功",
     type: "success",
@@ -102,7 +103,7 @@ const handleClose = (done: () => void) => {
     .catch(() => {});
 };
 </script>
-<style lang='less' scoped>
+<style lang="less" scoped>
 #top_header {
   height: 50px;
   width: 100%;

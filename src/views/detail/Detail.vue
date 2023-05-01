@@ -168,6 +168,7 @@ import { ElMessage, ElMessageBox, inputEmits } from "element-plus";
 import { getId, getItem } from "@/utils/login";
 import { userInfo } from "@/stores/userInfo";
 import type { IArticleInfo, IUserInfo } from "@/types/type";
+import { isLogin } from "@/utils/user";
 
 interface ICommentInfo {
   id: number;
@@ -231,6 +232,8 @@ const errorComent = reactive<string[]>([
 ]);
 
 const value = ref();
+
+const flag = getId();
 
 //dom挂载完成之后请求数据
 onMounted(() => {
@@ -323,6 +326,13 @@ const getArticleCount = async () => {
 
 //点击喜欢按钮
 const giveLike = async (id: number) => {
+  const flag = isLogin();
+  // console.log(flag)
+  if (flag) {
+    return ElMessage({
+      message: "请先登录！",
+    });
+  }
   // console.log(id);
   try {
     const { data } = await requests(`/detail/userLike/${id}`);
@@ -341,7 +351,9 @@ const giveLike = async (id: number) => {
 };
 
 //点击评论按钮
-const toCommot = () => {};
+const toCommot = () => {
+  console.log('1')
+};
 
 //处理关闭对话框
 const handleClose = (done: () => void) => {
@@ -356,6 +368,10 @@ const handleClose = (done: () => void) => {
 
 //关闭对话框,提交举报信喜,清空表单数据
 const closeDialog = async () => {
+  if (!flag) {
+    return ElMessage("请先登录");
+  }
+
   if (state.form.region === "") {
     ElMessage({
       message: "类型不能为空！",
@@ -373,7 +389,7 @@ const closeDialog = async () => {
         reportable_id: route.query.user_id,
         article_id: state.dataInfo.article_id,
         username: state.userInfo.username,
-        article_name:state.dataInfo.title,
+        article_name: state.dataInfo.title,
         type: state.form.region,
         description: state.form.desc,
       },
@@ -420,9 +436,8 @@ const sendComment = async () => {
   const user_id = getId();
   const user_name = getItem("name");
   if (!user_name) {
-    router.push("/login");
     ElMessage({
-      message: "请前往登录页面登录",
+      message: "请先登录!",
     });
     return;
   }
@@ -456,6 +471,13 @@ const sendComment = async () => {
 
 //用户点击关注按钮
 const followUser = async () => {
+  // const flag = getId();
+  if (!flag) {
+    return ElMessage({
+      message: "请先登录",
+    });
+  }
+
   try {
     const { data } = await requests({
       url: "detail/follow",

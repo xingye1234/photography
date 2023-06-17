@@ -129,11 +129,11 @@ onMounted(() => {
           show: true,
           color: "#1DE9B6",
         },
-        emphasis: {
+        /*  emphasis: {
           textStyle: {
             color: "rgb(183,185,14)",
           },
-        },
+        }, */
 
         itemStyle: {
           //   normal: {
@@ -218,7 +218,7 @@ onMounted(() => {
 
         return [salvProName, salvProValue];
       };
-    
+
       if (data.code === 200) {
         // data.data     dataMap[name]
         newMap.forEach((item) => {
@@ -246,9 +246,9 @@ onMounted(() => {
   });
 });
 
-type arrayType = string[] | number [];
+type arrayType = string[] | number[];
 
-const initLeftMap = (salvProName: arrayType, salvProValue:arrayType) => {
+const initLeftMap = (salvProName: arrayType, salvProValue: arrayType) => {
   let myEcharts2 = echarts.init(
     document.querySelector(".echarts-wrap") as HTMLElement
   );

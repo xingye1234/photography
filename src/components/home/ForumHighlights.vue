@@ -27,10 +27,12 @@ const router = useRouter();
 const date = new Date().toLocaleDateString() + "-" + new Date().toLocaleTimeString()
 const currentDate = ref(date);
 
-const dataList = reactive<string[]>(['src/assets/论坛精选/63202441eaf77.jpg',
-'src/assets/论坛精选/6356446a7fbee.jpg',
-'src/assets/论坛精选/63202441eaf77.jpg',
-'src/assets/论坛精选/6356446a7fbee.jpg'
+// new URL('../../assets/论坛精选/63202441eaf77.jpg', import.meta.url).href
+
+const dataList = reactive<string[]>([new URL('../../assets/photo/63202441eaf77.jpg', import.meta.url).href,
+  new URL('../../assets/photo/6356446a7fbee.jpg', import.meta.url).href,
+  new URL('../../assets/photo/63202441eaf77.jpg', import.meta.url).href,
+  new URL('../../assets/photo/6356446a7fbee.jpg', import.meta.url).href
 ])
 
 defineProps<{

@@ -2,11 +2,7 @@
   <div id="personal_center">
     <el-scrollbar height="100vh">
       <TopHeader></TopHeader>
-      <img
-        src="../../assets/banner/image/雪白唯美.jpeg"
-        alt=""
-        class="bg_img"
-      />
+      <img src="../../assets/banner/image/4.jpeg" alt="" class="bg_img" />
       <div class="edit_info" v-if="isShowEdit">
         <el-icon style="vertical-align: -2px; margin-right: 3px"
           ><Edit /></el-icon

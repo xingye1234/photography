@@ -1,8 +1,7 @@
 <template>
   <div id="home">
-   
     <HomeHeader></HomeHeader>
-    
+
     <!-- 轮播图 -->
     <el-carousel
       height="525px"
@@ -25,71 +24,72 @@
     <GreateProdution :dataList="articleStore.articleInfo"></GreateProdution>
 
     <!-- 底部 -->
-    <Footer></Footer>
+    <Footer ref="footer"></Footer>
 
     <!-- 回到顶部按钮 -->
     <TopBtn></TopBtn>
-
   </div>
 </template>
 
-
 <script setup lang="ts">
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref, h } from "vue";
 import HomeHeader from "@/components/home/Header/HomeHeader.vue";
 import ForumHig from "@/components/home/ForumHighlights.vue";
 import Footer from "@/components/home/Footer.vue";
 import TopBtn from "@/components/home/TopBtn.vue";
-import GreateProdution from "@/components/home/GreateProduction.vue"
-import requests from '@/network/request'
-import {userInfo} from "@/stores/userInfo"
-import {articleInfo} from "@/stores/article"
-import { throttle } from "lodash";
+import GreateProdution from "@/components/home/GreateProduction.vue";
+import { userInfo } from "@/stores/userInfo";
+import { articleInfo } from "@/stores/article";
 
 interface IBannerList {
   id: number;
-  img: string;
+  img: any;
 }
 
 interface IProduction {
   article_id: number;
   user_id: number;
   title: string;
-  create_time:string;
+  create_time: string;
   description: string;
-  img:string;
+  img: string;
 }
 
 const userStore = userInfo();
-const articleStore = articleInfo()
+const articleStore = articleInfo();
+const footer = ref<HTMLElement>();
 
-let bannerList = reactive<IBannerList[]>([{
-  id: 1,
-  img: "src/assets/banner/image/海岛风景.jpeg"
-},
-{
-  id: 2,
-  img:'src/assets/banner/image/荒岛宝藏.jpeg'
-},
-{
-  id: 3,
-  img: "src/assets/banner/image/静谧湖泊.jpeg"
-},
-{
-  id: 4,
-  img: "src/assets/banner/image/雪白唯美.jpeg"
-}
+let bannerList = reactive<IBannerList[]>([
+  {
+    id: 1,
+    img: new URL('../../assets/banner/image/1.jpeg', import.meta.url).href,
+  },
+  {
+    id: 2,
+    img: new URL('../../assets/banner/image/2.jpeg', import.meta.url).href,
+  },
+  {
+    id: 3,
+    img: new URL('../../assets/banner/image/3.jpeg', import.meta.url).href,
+  },
+  {
+    id: 4,
+    img: new URL('../../assets/banner/image/4.jpeg', import.meta.url).href,
+  },
 ]);
 
-
-const greateProduction = reactive<IProduction[]>([])
-const homeSrcoll = ref(0)
-const topBtnScroll = ref(0)
+const greateProduction = reactive<IProduction[]>([]);
+const homeSrcoll = ref(0);
+const topBtnScroll = ref(0);
 
 onMounted(() => {
   getGreateProduction();
   //获取用户信息
   userStore.getUserInfo();
+
+  // console.log("----->footer", footer.value?.$parent);
+  // const divs = h("div", { class: "wrap" }, "hello");
+  // console.log(divs);
 });
 
 const currentIndex = ref(0);
@@ -100,21 +100,18 @@ const carouselChange = (current: number, pre: number) => {
 };
 
 //获取优秀作品
-const getGreateProduction = ()=>{
- 
+const getGreateProduction = () => {
   // 使用仓库存储数据
-  articleStore.getArticleInfo()
-}
-
-
+  articleStore.getArticleInfo();
+};
 </script>
 
 <style scoped>
-.el-carousel:deep(.el-carousel__arrow){
+.el-carousel:deep(.el-carousel__arrow) {
   position: relative;
-  z-index:9999;
+  z-index: 9999;
 }
-.el-carousel:deep(.el-carousel__arrow--right){
+.el-carousel:deep(.el-carousel__arrow--right) {
   left: 94%;
 }
 .demonstration {
@@ -143,13 +140,13 @@ img {
   display: block;
 }
 
-.logo-text{
+.logo-text {
   width: 100%;
   height: 525px;
   position: absolute;
   background-color: rgba(0, 0, 0, 0.5);
   top: 0;
-  font-family: '华文行楷';
+  font-family: "华文行楷";
   z-index: 99;
   display: flex;
   justify-content: center;
@@ -157,6 +154,4 @@ img {
   color: white;
   font-size: 80px;
 }
-
-
 </style>
